@@ -45,7 +45,7 @@ public class FileDeleterTests
         {
             CreateFiles(dir, "a.txt");
             Assert.Throws<ArgumentNullException>(() =>
-                FileDeleter.SelectFilesForDeletion(dir, null!).ToList());
+                FileDeleter.SelectFilesForDeletion(dir, (Predicate<int>)null!).ToList());
         }
         finally { Directory.Delete(dir, true); }
     }
@@ -66,7 +66,7 @@ public class FileDeleterTests
         var dir = CreateTempDir();
         try
         {
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, _ => true).ToList();
+            var deleted = FileDeleter.SelectFilesForDeletion(dir, (Predicate<int>)(_ => true)).ToList();
             Assert.Empty(deleted);
         }
         finally { Directory.Delete(dir, true); }
@@ -80,7 +80,7 @@ public class FileDeleterTests
         {
             CreateFiles(dir, "D.txt", "c.txt", "B.txt", "a.txt");
 
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, _ => true);
+            var deleted = FileDeleter.SelectFilesForDeletion(dir, (Predicate<int>)(_ => true));
             Assert.Equal(new[] { "a.txt", "B.txt", "c.txt", "D.txt" }, deleted.Select(f => f.Name).ToArray());
         }
         finally { Directory.Delete(dir, true); }
