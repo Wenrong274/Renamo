@@ -1,11 +1,11 @@
-﻿using BatchFileDeleter;
+﻿using BatchFileProcessor;
 namespace TestRenamo;
 
-public class FileDeleterTests
+public class TestConditionalFileSelector
 {
     private static string CreateTempDir()
     {
-        var dir = Path.Combine(Path.GetTempPath(), "FileDeleterTests_" + Guid.NewGuid());
+        var dir = Path.Combine(Path.GetTempPath(), "ConditionalFileSelectorTests_" + Guid.NewGuid());
         Directory.CreateDirectory(dir);
         return dir;
     }
@@ -21,20 +21,20 @@ public class FileDeleterTests
     public void SelectFilesForDeletion_NullFolderPath_ThrowsArgumentNullException()
     {
         string folderPath = null!;
-        Predicate<int> del = _ => true;
+        Func<int, bool> del = _ => true;
 
-        Assert.Throws<ArgumentNullException>(() =>
-            FileDeleter.SelectFilesForDeletion(folderPath, del).ToList());
+        Assert.Throws<ArgumentException>(() =>
+            ConditionalFileSelector.SelectFilesByIndex(folderPath, del).ToList());
     }
 
     [Fact]
     public void SelectFilesForDeletion_EmptyFolderPath_ThrowsArgumentNullException()
     {
         string folderPath = "";
-        Predicate<int> del = _ => true;
+        Func<int, bool> del = _ => true;
 
-        Assert.Throws<ArgumentNullException>(() =>
-            FileDeleter.SelectFilesForDeletion(folderPath, del).ToList());
+        Assert.Throws<ArgumentException>(() =>
+           ConditionalFileSelector.SelectFilesByIndex(folderPath, del).ToList());
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class FileDeleterTests
         {
             CreateFiles(dir, "a.txt");
             Assert.Throws<ArgumentNullException>(() =>
-                FileDeleter.SelectFilesForDeletion(dir, (Predicate<int>)null!).ToList());
+                ConditionalFileSelector.SelectFilesByIndex(dir, null!).ToList());
         }
         finally { Directory.Delete(dir, true); }
     }
@@ -53,11 +53,11 @@ public class FileDeleterTests
     [Fact]
     public void SelectFilesForDeletion_DirectoryNotExist_ThrowsDirectoryNotFoundException()
     {
-        var notExist = Path.Combine(Path.GetTempPath(), "FileDeleter_NotExist_" + Guid.NewGuid());
-        Predicate<int> del = _ => true;
+        var notExist = Path.Combine(Path.GetTempPath(), "ConditionalFileSelector_NotExist_" + Guid.NewGuid());
+        Func<int, bool> del = _ => true;
 
         Assert.Throws<DirectoryNotFoundException>(() =>
-            FileDeleter.SelectFilesForDeletion(notExist, del).ToList());
+            ConditionalFileSelector.SelectFilesByIndex(notExist, del).ToList());
     }
 
     [Fact]
@@ -66,7 +66,7 @@ public class FileDeleterTests
         var dir = CreateTempDir();
         try
         {
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, (Predicate<int>)(_ => true)).ToList();
+            var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, (_ => true)).ToList();
             Assert.Empty(deleted);
         }
         finally { Directory.Delete(dir, true); }
@@ -80,7 +80,7 @@ public class FileDeleterTests
         {
             CreateFiles(dir, "D.txt", "c.txt", "B.txt", "a.txt");
 
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, (Predicate<int>)(_ => true));
+            var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, (_ => true));
             Assert.Equal(new[] { "a.txt", "B.txt", "c.txt", "D.txt" }, deleted.Select(f => f.Name).ToArray());
         }
         finally { Directory.Delete(dir, true); }
@@ -94,10 +94,10 @@ public class FileDeleterTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt", "c.txt", "d.txt", "e.txt", "f.txt");
-            var del = FileDeleter.DeleteEveryNth(2);
+            var del = DeletionRules.EveryNth(2);
 
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, del);
-            Assert.Equal(new[] { "c.txt", "e.txt" }, deleted.Select(f => f.Name).ToArray());
+            var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, del);
+            Assert.Equal(new[] { "c.txt", "f.txt" }, deleted.Select(f => f.Name).ToArray());
         }
         finally { Directory.Delete(dir, true); }
     }
@@ -109,9 +109,9 @@ public class FileDeleterTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt", "c.txt");
-            var del = FileDeleter.DeleteEveryNth(100);
+            var del = DeletionRules.EveryNth(100);
 
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, del);
+            var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, del);
             Assert.Equal(Array.Empty<string>(), deleted.Select(f => f.Name).ToArray());
         }
         finally { Directory.Delete(dir, true); }
@@ -125,9 +125,9 @@ public class FileDeleterTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt", "c.txt", "d.txt", "e.txt");
-            var del = FileDeleter.DeleteByTakeSkip(2, 1);
+            var del = DeletionRules.KeepThenDelete(2, 1);
 
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, del);
+            var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, del);
             Assert.Equal(new[] { "c.txt" }, deleted.Select(f => f.Name).ToArray());
         }
         finally { Directory.Delete(dir, true); }
@@ -140,9 +140,9 @@ public class FileDeleterTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt", "c.txt", "d.txt");
-            var del = FileDeleter.DeleteByTakeSkip(1, 1);
+            var del = DeletionRules.KeepThenDelete(1, 1);
 
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, del);
+            var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, del);
             Assert.Equal(new[] { "b.txt", "d.txt" }, deleted.Select(f => f.Name).ToArray());
         }
         finally { Directory.Delete(dir, true); }
@@ -155,9 +155,9 @@ public class FileDeleterTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt");
-            Predicate<int> delNone = _ => false;
+            Func<int, bool> delNone = _ => false;
 
-            var deleted = FileDeleter.SelectFilesForDeletion(dir, delNone).ToList();
+            var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, delNone).ToList();
             Assert.Empty(deleted);
         }
         finally { Directory.Delete(dir, true); }
