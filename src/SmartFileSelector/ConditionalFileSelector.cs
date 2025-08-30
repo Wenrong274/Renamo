@@ -1,27 +1,27 @@
 ﻿namespace SmartFileSelector;
 
-public static  class ConditionalFileSelector
+public static class ConditionalFileSelector
 {
     /// <summary>
-    /// 依據自訂條件列舉符合刪除條件的檔案。
+    ///  選擇符合條件的檔案。
     /// 檔案會依指定比較器排序，預設為檔名不分大小寫排序。
     /// </summary>
     /// <param name="folderPath">目標資料夾路徑</param>
-    /// <param name="shouldDelete">刪除條件委派，參數為 (索引, 檔案資訊)</param>
+    /// <param name="shouldSelect"> 檔案刪除條件</param>
     /// <param name="searchPattern">檔案搜尋模式，預設為 "*"</param>
     /// <param name="searchOption">搜尋選項，預設僅搜尋頂層目錄</param>
     /// <param name="comparer">檔案排序比較器，預設為檔名不分大小寫比較</param>
-    /// <returns>符合刪除條件的檔案集合</returns>
+    /// <returns>符合條件的檔案集合</returns>
     /// <exception cref="ArgumentNullException">當必要參數為 null 時拋出</exception>
     /// <exception cref="DirectoryNotFoundException">當目標資料夾不存在時拋出</exception>
-    public static IEnumerable<FileInfo> EnumerateFilesForDeletion(
+    public static IEnumerable<FileInfo> EnumerateFiles(
         string folderPath,
-        Func<int, FileInfo, bool> shouldDelete,
+        Func<int, FileInfo, bool> shouldSelect,
         string searchPattern = "*",
         SearchOption searchOption = SearchOption.TopDirectoryOnly,
         IComparer<FileInfo>? comparer = null)
     {
-        ValidateInputs(folderPath, shouldDelete);
+        ValidateInputs(folderPath, shouldSelect);
 
         if (!Directory.Exists(folderPath))
             throw new DirectoryNotFoundException($"資料夾不存在: {folderPath}");
@@ -33,31 +33,31 @@ public static  class ConditionalFileSelector
 
         return sortedFiles
             .Select((file, index) => new { File = file, Index = index })
-            .Where(item => shouldDelete(item.Index, item.File))
+            .Where(item => shouldSelect(item.Index, item.File))
             .Select(item => item.File);
     }
 
     /// <summary>
-    /// 僅基於索引位置選擇要刪除的檔案。
+    /// 僅基於索引位置選擇要的檔案。
     /// </summary>
     /// <param name="folderPath">目標資料夾路徑</param>
-    /// <param name="shouldDeleteIndex">索引刪除條件，參數為 0-based 索引</param>
+    /// <param name="shouldSelectIndex">索引條件，參數為 0-based 索引</param>
     /// <param name="searchPattern">檔案搜尋模式</param>
     /// <param name="searchOption">搜尋選項</param>
     /// <param name="comparer">檔案排序比較器</param>
     /// <returns>符合索引刪除條件的檔案集合</returns>
     public static IEnumerable<FileInfo> SelectFilesByIndex(
         string folderPath,
-        Func<int, bool> shouldDeleteIndex,
+        Func<int, bool> shouldSelectIndex,
         string searchPattern = "*",
         SearchOption searchOption = SearchOption.TopDirectoryOnly,
         IComparer<FileInfo>? comparer = null)
     {
-        ArgumentNullException.ThrowIfNull(shouldDeleteIndex);
+        ArgumentNullException.ThrowIfNull(shouldSelectIndex);
 
-        return EnumerateFilesForDeletion(
+        return EnumerateFiles(
             folderPath,
-            (index, _) => shouldDeleteIndex(index),
+            (index, _) => shouldSelectIndex(index),
             searchPattern,
             searchOption,
             comparer);

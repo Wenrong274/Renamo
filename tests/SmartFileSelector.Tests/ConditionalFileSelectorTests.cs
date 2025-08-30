@@ -93,7 +93,7 @@ public class ConditionalFileSelectorTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt", "c.txt", "d.txt", "e.txt", "f.txt");
-            var del = DeletionRules.EveryNth(2);
+            var del = FileSelectorRules.EveryNth(2);
 
             var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, del);
             Assert.Equal(new[] { "c.txt", "f.txt" }, deleted.Select(f => f.Name).ToArray());
@@ -108,7 +108,7 @@ public class ConditionalFileSelectorTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt", "c.txt");
-            var del = DeletionRules.EveryNth(100);
+            var del = FileSelectorRules.EveryNth(100);
 
             var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, del);
             Assert.Equal(Array.Empty<string>(), deleted.Select(f => f.Name).ToArray());
@@ -124,7 +124,7 @@ public class ConditionalFileSelectorTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt", "c.txt", "d.txt", "e.txt");
-            var del = DeletionRules.KeepThenDelete(2, 1);
+            var del = FileSelectorRules.KeepThenSelete(2, 1);
 
             var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, del);
             Assert.Equal(new[] { "c.txt" }, deleted.Select(f => f.Name).ToArray());
@@ -139,7 +139,7 @@ public class ConditionalFileSelectorTests
         try
         {
             CreateFiles(dir, "a.txt", "b.txt", "c.txt", "d.txt");
-            var del = DeletionRules.KeepThenDelete(1, 1);
+            var del = FileSelectorRules.KeepThenSelete(1, 1);
 
             var deleted = ConditionalFileSelector.SelectFilesByIndex(dir, del);
             Assert.Equal(new[] { "b.txt", "d.txt" }, deleted.Select(f => f.Name).ToArray());
