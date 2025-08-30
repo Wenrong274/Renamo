@@ -1,7 +1,6 @@
-﻿using BatchFileProcessor;
-namespace TestRenamo;
+﻿namespace SmartFileSelector.Tests;
 
-public class TestConditionalFileSelector
+public class ConditionalFileSelectorTests
 {
     private static string CreateTempDir()
     {

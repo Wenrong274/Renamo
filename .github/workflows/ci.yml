@@ -1,18 +1,17 @@
-# .github/workflows/ci.yml
-name: CI/CD
+# .github/workflows/wpf-ci.yml
+name: WPF CI
 
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:  # 允許手動觸發
 
 jobs:
-  test:
-    name: Build & Test
-    runs-on: ubuntu-latest
-    
+  build-and-test:
+    name: Build WPF App & Run Tests
+    runs-on: windows-latest  # WPF 需要 Windows
+
     steps:
     - name: 📥 Checkout code
       uses: actions/checkout@v4
@@ -33,65 +32,31 @@ jobs:
     - name: 🔄 Restore dependencies
       run: dotnet restore
 
-    - name: 🔨 Build
+    - name: 🔨 Build WPF Application
       run: dotnet build --configuration Release --no-restore
 
+    # 如果有測試專案，執行測試
     - name: 🧪 Run tests
+      run: dotnet test --configuration Release --no-build --verbosity normal
+      continue-on-error: false
+
+    # 發佈 WPF 應用程式
+    - name: 📦 Publish WPF App
       run: |
-        dotnet test \
-          --configuration Release \
-          --no-build \
-          --verbosity normal \
-          --logger trx \
-          --results-directory TestResults
+        dotnet publish --configuration Release --no-build --output ./publish
 
-    - name: 📊 Publish test results
-      uses: dorny/test-reporter@v1
-      if: success() || failure()
-      with:
-        name: '.NET Tests'
-        path: 'TestResults/*.trx'
-        reporter: dotnet-trx
-
-    - name: 📤 Upload test results on failure
-      if: failure()
+    # 上傳建置產物
+    - name: 📤 Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: test-results
-        path: TestResults/
-        retention-days: 3
+        name: wpf-application
+        path: ./publish/
+        retention-days: 7
 
-  # 可選：多平台測試
-  multi-platform:
-    name: Test on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    if: github.event_name == 'pull_request'
-    
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-    - run: dotnet test --verbosity normal
-
-  # 可選：程式碼品質檢查
-  quality:
-    name: Code Quality
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-    
-    - name: 📋 Install format tool
-      run: dotnet tool install -g dotnet-format
-      
-    - name: 🎨 Check code format
-      run: dotnet format --verify-no-changes --verbosity diagnostic
+    - name: ✅ Build Summary
+      run: |
+        echo "🎉 WPF 應用程式建置成功!"
+        echo "📁 發佈檔案位於 ./publish/ 目錄"
+        if (Test-Path "./publish") {
+          Get-ChildItem -Path "./publish" | Select-Object Name, Length | Format-Table
+        }

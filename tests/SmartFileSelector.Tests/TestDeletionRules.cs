@@ -1,6 +1,4 @@
-﻿using BatchFileProcessor;
-
-namespace TestRenamo;
+﻿namespace SmartFileSelector.Tests;
 
 public class TestDeletionRules
 {

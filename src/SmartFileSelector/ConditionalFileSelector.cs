@@ -1,11 +1,6 @@
-﻿using System.IO;
+﻿namespace SmartFileSelector;
 
-namespace BatchFileProcessor;
-
-/// <summary>
-/// 提供基於規則的檔案選擇功能，用於批次處理或刪除操作。
-/// </summary>
-public static partial class ConditionalFileSelector
+public static  class ConditionalFileSelector
 {
     /// <summary>
     /// 依據自訂條件列舉符合刪除條件的檔案。

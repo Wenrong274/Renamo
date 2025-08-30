@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace BatchFileProcessor;
+﻿namespace SmartFileSelector;
 
 /// <summary>
 /// 檔案資訊比較器，提供多種排序方式。

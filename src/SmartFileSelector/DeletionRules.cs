@@ -1,4 +1,5 @@
-﻿namespace BatchFileProcessor;
+﻿
+namespace SmartFileSelector;
 
 /// <summary>
 /// 常用的檔案刪除規則。
