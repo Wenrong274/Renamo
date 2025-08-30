@@ -1,29 +1,40 @@
-# .github/workflows/ci.yml
-name: CI
+name: Build & Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
-  test:
-    name: Build & Test
-    runs-on: windows-latest  # 改為 Windows
+  build-test:
+    runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-    
-    - name: Restore packages
-      run: dotnet restore
-    
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    
-    - name: Run tests
-      run: dotnet test --configuration Release --no-build --verbosity normal
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build (Release)
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test (with TRX)
+        run: dotnet test --configuration Release --no-build `
+              --logger "trx;LogFileName=TestResults.trx" `
+              --results-directory TestResults
+        shell: pwsh
+
+      - name: Upload Test Results (.trx)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: "**/TestResults/*.trx"
+          if-no-files-found: warn
