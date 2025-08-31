@@ -15,7 +15,6 @@ namespace SmartFileSelector.Wpf
 
         }
 
-
         public void RenameFiles(string folder, string pattern)
         {
             try
