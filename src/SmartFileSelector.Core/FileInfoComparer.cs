@@ -1,4 +1,4 @@
-﻿namespace SmartFileSelector;
+﻿namespace SmartFileSelector.Core;
 
 /// <summary>
 /// 檔案資訊比較器，提供多種排序方式。

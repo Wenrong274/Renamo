@@ -1,4 +1,4 @@
-﻿namespace SmartFileSelector;
+﻿namespace SmartFileSelector.Core;
 
 public static class ConditionalFileSelector
 {

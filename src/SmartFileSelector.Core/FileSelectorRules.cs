@@ -1,4 +1,4 @@
-﻿namespace SmartFileSelector;
+﻿namespace SmartFileSelector.Core;
 
 /// <summary>
 ///  檔案刪除規則。

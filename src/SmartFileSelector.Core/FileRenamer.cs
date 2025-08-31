@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-namespace SmartFileSelector;
+﻿namespace SmartFileSelector.Core;
 
 public static class FileRenamer
 {
@@ -12,7 +9,7 @@ public static class FileRenamer
     /// <param name="customName">自訂檔名</param>
     /// <param name="digitCount">流水號長度 (例如 2 = 01, 3 = 001)</param>
     /// <param name="searchPattern">搜尋模式，預設 "*"</param>
-    public static void RenameFiles(
+    public static void Rename(
         string folderPath,
         string customName,
         int digitCount = 2,
@@ -40,7 +37,7 @@ public static class FileRenamer
         }
     }
 
-    public static void RenameFilesWithPattern(
+    public static void RenameWithPattern(
     string folderPath,
     string pattern,
     string searchPattern = "*",
@@ -48,6 +45,6 @@ public static class FileRenamer
     IComparer<FileInfo>? comparer = null)
     {
         var (customName, digitCount) = RenamePatternParser.Parse(pattern);
-        RenameFiles(folderPath, customName, digitCount, searchPattern, searchOption, comparer);
+        Rename(folderPath, customName, digitCount, searchPattern, searchOption, comparer);
     }
 }

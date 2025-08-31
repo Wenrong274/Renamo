@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Xunit;
+﻿using SmartFileSelector.Core;
 
 namespace SmartFileSelector.Tests;
 
@@ -30,7 +27,7 @@ public class FileRenamerTests
             // 排序包含不同大小寫，驗證 ByNameIgnoreCase 的一致命名順序
             CreateFiles(dir, "B.png", "a.jpg", "c.GIF");
 
-            FileRenamer.RenameFilesWithPattern(dir, "RenamFiles_{00}");
+            FileRenamer.RenameWithPattern(dir, "RenamFiles_{00}");
 
             var names = new DirectoryInfo(dir).GetFiles().Select(f => f.Name).OrderBy(n => n).ToArray();
             Assert.Contains("RenamFiles_01.jpg", names);
@@ -48,7 +45,7 @@ public class FileRenamerTests
         {
             CreateFiles(dir, "d.txt", "c.txt", "b.txt", "a.txt");
 
-            FileRenamer.RenameFilesWithPattern(dir, "Out_{000}");
+            FileRenamer.RenameWithPattern(dir, "Out_{000}");
 
             var names = new DirectoryInfo(dir).GetFiles().Select(f => f.Name).OrderBy(n => n).ToArray();
             Assert.Contains("Out_001.txt", names);
@@ -68,7 +65,7 @@ public class FileRenamerTests
             CreateFiles(dir, "a.jpg", "b.png", "c.jpg");
 
             // 只改 .jpg
-            FileRenamer.RenameFilesWithPattern(dir, "Pic_{00}", "*.jpg");
+            FileRenamer.RenameWithPattern(dir, "Pic_{00}", "*.jpg");
 
             var names = new DirectoryInfo(dir).GetFiles().Select(f => f.Name).OrderBy(n => n).ToArray();
             // 兩個 jpg 被改名，png 保持原名
@@ -87,7 +84,7 @@ public class FileRenamerTests
         {
             CreateFiles(dir, "a.txt");
             Assert.Throws<ArgumentException>(() =>
-                FileRenamer.RenameFilesWithPattern(dir, "BadPattern")); // 缺少 {00}/{000}
+                FileRenamer.RenameWithPattern(dir, "BadPattern")); // 缺少 {00}/{000}
         }
         finally { Directory.Delete(dir, true); }
     }
@@ -97,7 +94,7 @@ public class FileRenamerTests
     {
         var notExist = Path.Combine(Path.GetTempPath(), "NotExist_" + Guid.NewGuid());
         Assert.Throws<DirectoryNotFoundException>(() =>
-            FileRenamer.RenameFilesWithPattern(notExist, "X_{00}"));
+            FileRenamer.RenameWithPattern(notExist, "X_{00}"));
     }
 
     [Fact]
@@ -107,7 +104,7 @@ public class FileRenamerTests
         try
         {
             CreateFiles(dir, "c.dat", "a.dat", "b.dat");
-            FileRenamer.RenameFiles(dir, "Data_", 3);
+            FileRenamer.Rename(dir, "Data_", 3);
 
             var names = new DirectoryInfo(dir).GetFiles().Select(f => f.Name).OrderBy(n => n).ToArray();
             Assert.Contains("Data_001.dat", names);

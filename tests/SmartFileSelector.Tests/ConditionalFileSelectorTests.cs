@@ -1,4 +1,6 @@
-﻿namespace SmartFileSelector.Tests;
+﻿using SmartFileSelector.Core;
+
+namespace SmartFileSelector.Tests;
 
 public class ConditionalFileSelectorTests
 {

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SmartFileSelector\SmartFileSelector.csproj" />
+    <ProjectReference Include="..\..\src\SmartFileSelector.Core\SmartFileSelector.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

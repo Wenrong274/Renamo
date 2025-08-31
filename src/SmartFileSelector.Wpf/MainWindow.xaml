@@ -1,0 +1,32 @@
+﻿<Window x:Class="SmartFileSelector.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SmartFileSelector.Wpf"
+        mc:Ignorable="d"
+        Title="批次重新令名" Height="450" Width="800">
+    <Grid Margin="10,10,10,-5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="91*"/>
+            <RowDefinition Height="54*"/>
+        </Grid.RowDefinitions>
+        <Button x:Name="RenameButton" Content="重新取名" HorizontalAlignment="Left" Margin="365,40,0,0" VerticalAlignment="Top" Height="40" Width="116" Click="RenameButton_Click"/>
+        <Label Content="路徑" HorizontalAlignment="Left" Margin="45,25,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="FolderText" HorizontalAlignment="Left" Margin="84,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
+        <TextBox x:Name="FileNamaRuleText" HorizontalAlignment="Left" Margin="84,69,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="276"/>
+        <Label Content="檔名規則" HorizontalAlignment="Left" Margin="21,65,0,0" VerticalAlignment="Top"/>
+        <StackPanel Margin="80,91,416,10">
+            <TextBlock Text="📖 批次更名規則" FontWeight="Bold"/>
+            <TextBlock Text="1. 基本格式：{00} 兩位數流水號，{000} 三位數流水號" TextWrapping="Wrap"/>
+            <TextBlock Text="   例：Photo_{00} → Photo_01.jpg" TextWrapping="Wrap"/>
+            <TextBlock Text="   例：Report_{000} → Report_001.pdf" TextWrapping="Wrap"/>
+            <TextBlock Text="2. 注意事項：" FontWeight="Bold"/>
+            <TextBlock Text="   - 大括號內只能是 0" TextWrapping="Wrap"/>
+            <TextBlock Text="   - 原始副檔名會自動保留" TextWrapping="Wrap"/>
+            <TextBlock Text="   - 建議在 {} 前加底線 (_) 讓檔名更清晰" TextWrapping="Wrap"/>
+        </StackPanel>
+    </Grid>
+
+
+</Window>

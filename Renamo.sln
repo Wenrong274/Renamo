@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFileSelector", "src\SmartFileSelector\SmartFileSelector.csproj", "{74F50886-0FFF-4086-9614-F5E01C9D724C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFileSelector.Core", "src\SmartFileSelector.Core\SmartFileSelector.Core.csproj", "{74F50886-0FFF-4086-9614-F5E01C9D724C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFileSelector.Tests", "tests\SmartFileSelector.Tests\SmartFileSelector.Tests.csproj", "{AAE56D31-E6A3-4F98-8494-8DBF24D768F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartFileSelector.Wpf", "src\SmartFileSelector.Wpf\SmartFileSelector.Wpf.csproj", "{6CF11AE4-55BB-4E3F-ABC3-6219920288F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AAE56D31-E6A3-4F98-8494-8DBF24D768F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AAE56D31-E6A3-4F98-8494-8DBF24D768F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AAE56D31-E6A3-4F98-8494-8DBF24D768F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CF11AE4-55BB-4E3F-ABC3-6219920288F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CF11AE4-55BB-4E3F-ABC3-6219920288F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CF11AE4-55BB-4E3F-ABC3-6219920288F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CF11AE4-55BB-4E3F-ABC3-6219920288F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

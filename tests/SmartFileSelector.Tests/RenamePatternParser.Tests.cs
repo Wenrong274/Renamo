@@ -1,5 +1,4 @@
-﻿using Xunit;
-using System;
+﻿using SmartFileSelector.Core;
 
 namespace SmartFileSelector.Tests;
 
