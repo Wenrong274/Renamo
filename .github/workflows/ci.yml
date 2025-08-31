@@ -1,53 +1,42 @@
 name: Build & Test
-
 on:
-  # 1) Feature 分支 push：只在有動到程式或測試時觸發
   push:
     branches:
-      - "**"                 # 所有分支
+      - "**"
     paths:
       - "src/**"
       - "tests/**"
       - "**/*.sln"
       - "**/*.csproj"
-  # 2) PR → main/master 一律觸發
   pull_request:
     branches: [ main, master ]
-  # 3) 手動
   workflow_dispatch:
-
-# 避免同一分支重複佔用 runner；後推的覆蓋前推
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
   build-test:
     runs-on: windows-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-          cache: true
-
+          cache: false
       - name: Restore
         run: dotnet restore
-
       - name: Build (Release)
         run: dotnet build --configuration Release --no-restore
-
       - name: Test (with TRX)
         run: dotnet test --configuration Release --no-build `
               --logger "trx;LogFileName=TestResults.trx" `
               --results-directory TestResults `
               --collect "XPlat Code Coverage"
         shell: pwsh
-
+      - name: Publish Single File EXE
+        run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish
       - name: Upload Test Results (.trx)
         if: always()
         uses: actions/upload-artifact@v4
@@ -55,7 +44,6 @@ jobs:
           name: test-results
           path: "**/TestResults/*.trx"
           if-no-files-found: warn
-
       - name: Upload Coverage (cobertura)
         if: always()
         uses: actions/upload-artifact@v4
@@ -63,3 +51,8 @@ jobs:
           name: coverage
           path: "**/TestResults/**/coverage.cobertura.xml"
           if-no-files-found: warn
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-executable
+          path: ./publish/*.exe

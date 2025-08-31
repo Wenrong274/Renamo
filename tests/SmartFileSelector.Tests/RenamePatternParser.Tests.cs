@@ -9,6 +9,7 @@ public class RenamePatternParserTests
     [InlineData("Report_{000}", "Report_", 3)]
     [InlineData("Data Set_{00}", "Data Set_", 2)]
     [InlineData("X_{000}", "X_", 3)]
+    [InlineData("A_X_{000}", "A_X_", 3)]
     public void Parse_ValidPatterns_ReturnsExpectedNameAndDigits(
         string input, string expectedName, int expectedDigits)
     {
