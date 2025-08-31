@@ -35,8 +35,8 @@ jobs:
               --results-directory TestResults `
               --collect "XPlat Code Coverage"
         shell: pwsh
-      - name: Publish Single File EXE
-        run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o ./publish
+      - name: Publish Solution
+        run: dotnet publish -c Release -r win-x64 --self-contained true -o ./publish
       - name: Upload Test Results (.trx)
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,8 +51,8 @@ jobs:
           name: coverage
           path: "**/TestResults/**/coverage.cobertura.xml"
           if-no-files-found: warn
-      - name: Upload EXE
+      - name: Upload All Published Files
         uses: actions/upload-artifact@v4
         with:
-          name: windows-executable
-          path: ./publish/*.exe
+          name: published-applications
+          path: ./publish/**/*
